@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>VS Code-like Embedded Editor with Output</title>
+  <!-- Linking Monaco Editor CSS for proper styling -->
+  <link rel="stylesheet" href="https://unpkg.com/monaco-editor@latest/min/vs/editor/editor.main.css">
+  <style>
+    /* Additional Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden; /* Prevent scrolling */
+      background: #f5f5f5; /* Set a fixed background color */
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    #container {
+      display: grid;
+      grid-template-columns: 1fr; /* Initially a single column layout */
+      gap: 10px;
+      height: 100vh;
+      position: relative;
+    }
+    #editor {
+      border: 1px solid #ccc;
+      overflow: auto;
+      max-height: 100vh; /* Limit editor height on smaller screens */
+    }
+    #output {
+      background-color: #f5f5f5;
+      padding: 10px;
+      overflow: auto;
+    }
+    #divider {
+      display: none; /* Hide divider on smaller screens */
+    }
+    /* Custom Run Button Styles */
+    .button-container {
+      position: fixed;
+      top: 10px;
+      padding: 8px;
+      border-radius: 50%;
+      cursor: pointer;
+      z-index: 9999;
+    }
+    #runButton {
+      right: 10px;
+      background-color: #007acc;
+      color: #fff;
+    }
+
+    .button-container img {
+      width: 24px;
+      height: 24px;
+    }
+
+    /* Theme Dropdown Styles */
+    #themeDropdown {
+      position: fixed;
+      top:90%;
+      right: 10px;
+      transform: translateY(-50%);
+      z-index: 9999;
+    }
+
+    /* Media query for smaller screens */
+    @media screen and (min-width: 768px) {
+      #container {
+        grid-template-columns: 1fr 8px 1fr; /* Editor | Divider | Output */
+      }
+      #divider {
+        display: block; /* Show divider on larger screens */
+        cursor: ew-resize;
+        background-color: #ccc;
+        height: 100%;
+      }
+      #editor {
+        border: 1px solid #ccc;
+        overflow: auto;
+      }
+      #output {
+        background-color: #f5f5f5;
+        padding: 10px;
+        overflow: auto;
+      }
+ 
+      .button-container {
+        top: 10px;
+      }
+      #runButton {
+        right: 10px;
+      }
+      #themeButton {
+        right: 70px;
+      }
+    }
+  </style>
+</head>
+<body>
+ <div style="width: 100%; align-items: center;">
+    <h5>CourseHub</h5>
+ </div>
+  <div id="container">
+    <div id="editor" style="width: 100%"></div>
+    <div id="divider"></div> <!-- Divider -->
+    <div id="output"></div> <!-- Output -->
+  </div>
+  <div class="button-container" id="runButton">
+    <img src="https://via.placeholder.com/24" alt="Run Icon"> <!-- Replace this with your run icon URL -->
+  </div>
+  <div class="button-container" id="themeDropdown">
+    <select id="themeSelect">
+      <option value="vs">VS Light</option>
+      <option value="vs-dark">VS Dark</option>
+      <option value="hc-black">High Contrast</option>
+      <!-- Add more options for other themes -->
+    </select>
+  </div>
+
+  <script src="https://unpkg.com/monaco-editor@latest/min/vs/loader.js"></script>
+  <script>
+    require.config({ paths: { 'vs': 'https://unpkg.com/monaco-editor@latest/min/vs' }});
+
+    require(['vs/editor/editor.main'], function() {
+      var container = document.getElementById('container');
+      var editor = monaco.editor.create(document.getElementById('editor'), {
+        value: [
+          'console.log("Hello, World!");'
+        ].join('\n'),
+        language: 'javascript',
+        theme: 'vs' // Default theme
+      });
+
+      var isResizing = false;
+      var startX, startWidth;
+
+      document.getElementById('divider').addEventListener('mousedown', function(e) {
+        isResizing = true;
+        startX = e.clientX;
+        startWidth = parseInt(document.defaultView.getComputedStyle(document.getElementById('editor')).width, 10);
+      });
+
+      document.addEventListener('mousemove', function(e) {
+        if (isResizing) {
+          var newWidth = startWidth + (e.clientX - startX);
+          container.style.gridTemplateColumns = `${newWidth}px 8px 1fr`;
+        }
+      });
+
+      document.addEventListener('mouseup', function() {
+        isResizing = false;
+      });
+
+      // Theme change functionality
+      document.getElementById('themeSelect').addEventListener('change', function() {
+        var selectedTheme = document.getElementById('themeSelect').value;
+        editor.updateOptions({ theme: selectedTheme });
+      });
+
+      // Run button functionality
+      document.getElementById('runButton').addEventListener('click', function() {
+        var code = editor.getValue();
+        try {
+          var output = '';
+          var oldLog = console.log; // Preserve the original console.log function
+          console.log = function(value) {
+            // Capture the output from console.log
+            output += value + '\n';
+          };
+          eval(code); // Execute the code
+
+          // Display captured output
+          document.getElementById('output').innerText = 'Output:\n' + output;
+          
+          console.log = oldLog; // Restore the original console.log function
+        } catch (error) {
+          document.getElementById('output').innerText = 'Error: ' + error;
+        }
+      });
+
+      // Theme button functionality (toggle theme dropdown visibility)
+      var themeDropdown = document.getElementById('themeDropdown');
+      document.getElementById('themeButton').addEventListener('click', function() {
+        if (themeDropdown.style.display === 'none' || themeDropdown.style.display === '') {
+          themeDropdown.style.display = 'block';
+        } else {
+          themeDropdown.style.display = 'none';
+        }
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,76 @@
+.b-dy {
+  height: 69vh;
+  /* Set height to full viewport height */
+  overflow-y: auto;
+  /* Enable vertical scrolling */
+  padding: 20px;
+
+}
+
+/* For small devices (up to 767px width) */
+@media (max-width: 767px) {
+  .b-dy {
+    max-height: 55vh;
+  }
+
+  .cp{
+    max-height: 30vh !important;
+    /* padding: 10px; */
+  }
+  .table-div{
+    padding: 10px !important;
+  }
+}
+
+::-webkit-scrollbar {
+  background-color: rgb(232, 210, 210);
+  box-shadow: inset;
+  width: 10px;
+  border: 1px solid black;
+  border-radius: 20px;
+  column-width: 10px;
+}
+
+.container-fluied {
+  overflow-y: hidden;
+}
+
+.chapter-body {
+  box-shadow: 1px 0px 8px 0px rgb(110, 106,
+      106);
+  border-radius: 5px;
+  border: 20px solid #453f69;
+  border-right:
+    0;
+  border-top: 0;
+  border-bottom:
+    0;
+  border-left: 30;
+}
+
+.c-heading {
+  font-size: 20px;
+}
+
+.chapter-title {
+  color: black;
+  text-decoration: none;
+ 
+}
+
+.deadline {
+  color:  #de1414;
+}
+
+.score {
+  font-size: 20px
+}
+
+.bo{
+  border: 1px solid white;
+}
+
+.liststonehove{
+  
+}
+

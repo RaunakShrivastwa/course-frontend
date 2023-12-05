@@ -1,23 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
+import Home from './Component/Home/Home';
+import './static/milestone.css';
+import './static/listStone.css';
+import ChapterDash from './Component/ChapterDashBord/ChapterDash';
+import Placement from './Component/PlacementCell/Placement';
+import CodeStudio from './Component/CodeStudio/CodeStudio';
 
 function App() {
+  let d = 10;
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="container-fluied" >
+      <Router>
+        <Routes>
+          <Route exact path='/' Component={Home} />
+          <Route exact path='/chapter/Dashboard/:id' Component={ChapterDash} />
+          <Route exact path='/placement/cell' Component={Placement}/>
+          <Route exact path='/code/studio' Component={CodeStudio}/>
+        </Routes>
+      </Router>
     </div>
   );
 }
